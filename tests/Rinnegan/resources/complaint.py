@@ -39,18 +39,27 @@ class ComplaintResource(Resource):
         complaint_json = {}
         complaint_json['id'] = complaint.id
         complaint_json['text'] = complaint.text
-        complaint_json['timestamp'] = complaint.timestamp
+        complaint_json['timestamp'] = '{:%Y-%m-%d %H:%M:%S}'.format(complaint.timestamp)
         complaint_json['status'] = complaint.status
 
         result = {}
-        result['complaint'] = complaints_json
+        result['complaint'] = complaint_json
         result['success'] = True
         return result
 
 class ComplaintStatusResource(Resource):
 
     @login_required
-    def post(self, c_id, status):
+    def post(self, c_id):
+        args = request.get_json()
+
+        if ('status' not in args):
+            return {
+                'success': False,
+                'error': "invalid input"
+            }
+        status = args['status']
+
         complaint = Complaint.get(c_id)
         if complaint is None:
             return {
@@ -64,7 +73,7 @@ class ComplaintStatusResource(Resource):
             }
 
         try:
-            complaint.set_status('status')
+            complaint.set_status(status)
         except ValueError as e:
             return {
                 "success": False,

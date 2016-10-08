@@ -17,7 +17,6 @@ class LoginResourceTestCase(unittest.TestCase):
             'email': email,
             'password': password
         }
-
         return self.app.post(
             '/v1/login',
             data=json.dumps(posted_dict),
@@ -35,7 +34,6 @@ class LoginResourceTestCase(unittest.TestCase):
             'old_password': old_password,
             'new_password': new_password
         }
-
         return self.app.post(
             '/v1/change_password',
             data=json.dumps(posted_dict),
@@ -46,12 +44,23 @@ class LoginResourceTestCase(unittest.TestCase):
         posted_dict = {
             'email': email
         }
-
         return self.app.post(
             '/v1/forgot_password/p1',
             data=json.dumps(posted_dict),
             content_type='application/json'
-        )                
+        )    
+
+    def forgot_password_p2(self, email, token, new_password):
+        posted_dict = {
+            'email': email,
+            'token': token,
+            'new_password': new_password
+        }
+        return self.app.post(
+            '/v1/forgot_password/p2',
+            data=json.dumps(posted_dict),
+            content_type='application/json'
+        )                    
 
     def dejsonify(self, string):
         obj = json.loads(string.decode('utf-8'))
@@ -107,6 +116,25 @@ class LoginResourceTestCase(unittest.TestCase):
 
             self.assertEqual(len(outbox) ,1)
             assert str(pr.token) in outbox[0].body 
+
+        rv = self.forgot_password_p2('someone@gmail.com', pr.token, "pepsi1")
+        j = self.dejsonify(rv.data)
+        self.assertEqual(j['success'], False)
+
+        rv = self.forgot_password_p2('arushgyl@gmail.com', 122, "pepsi1")
+        j = self.dejsonify(rv.data)
+        self.assertEqual(j['success'], False)
+        
+        rv = self.forgot_password_p2('arushgyl@gmail.com', pr.token, "pepsi1")
+        j = self.dejsonify(rv.data)
+        self.assertEqual(j['success'], True)
+
+        self.login('arushgyl@gmail.com', 'pepsi1')
+        j = self.dejsonify(rv.data)
+        self.assertEqual(j['success'], True)
+
+        self.change_password('pepsi1', 'pepsi')
+        self.logout()
 
 if __name__ == '__main__':
     unittest.main()

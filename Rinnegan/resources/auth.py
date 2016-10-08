@@ -106,7 +106,13 @@ class ForgotPasswordP2Resource(Resource):
                 'error': "invalid input"
             }
 
-        supervisor = Supervisor.searchSupervisor(args['email'])
+        supervisor = Supervisor.search_supervisor(args['email'])
+        if(supervisor is None):
+            return {
+                'success': False,
+                'error': 'invalid email' 
+            }
+
         pr = supervisor.get_password_recovery()
         if(pr is not None):
             result = pr.recover_password(args['token'], args['new_password'])

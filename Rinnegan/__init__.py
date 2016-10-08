@@ -2,18 +2,16 @@ from flask import Flask
 from flask_restful import Api, Resource
 from flask_mail import Mail
 import os
-import json
 
 app = Flask(__name__)
 api = Api(app)
-email_cred = json.loads(os.environ['EMAIL_CRED'])
 
 app.config.update(
     MAIL_SERVER='smtp.gmail.com',
     MAIL_USE_SSL=True,
     MAIL_PORT=465,
-    MAIL_USERNAME=email_cred['username'],
-    MAIL_PASSWORD=email_cred['password'],
+    MAIL_USERNAME='complaintresolution40@gmail.com',
+    MAIL_PASSWORD="complaint.resolution",
     MAIL_DEFAULT_SENDER=('Complaint Resolver', 'complaintresolution40@gmail.com')
 )
 
