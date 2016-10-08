@@ -1,0 +1,19 @@
+aniso8601==1.1.0
+blinker==1.4
+click==6.6
+CouchDB==1.1
+Flask==0.11.1
+Flask-Mail==0.9.1
+Flask-RESTful==0.3.5
+itsdangerous==0.24
+Jinja2==2.8
+MarkupSafe==0.23
+marshmallow==2.10.3
+-e git+https://github.com/ComplaintResolution/models@e44ef7f4b54a93dd131eb38bea2c74638e20cd06#egg=models
+oauthlib==2.0.0
+python-dateutil==2.5.3
+pytz==2016.7
+requests==2.11.1
+requests-oauthlib==0.7.0
+six==1.10.0
+Werkzeug==0.11.11

@@ -1,0 +1,8 @@
+applications:
+- path: .
+  memory: 128M
+  instances: 1
+  domain: eu-gb.mybluemix.net
+  name: complaint-resolver
+  host: complaint-resolver
+  disk_quota: 1024M
