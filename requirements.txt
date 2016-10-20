@@ -9,7 +9,7 @@ itsdangerous==0.24
 Jinja2==2.8
 MarkupSafe==0.23
 marshmallow==2.10.3
--e git+https://github.com/ComplaintResolution/models@e44ef7f4b54a93dd131eb38bea2c74638e20cd06#egg=models
+-e git+https://github.com/ComplaintResolution/models#egg=models
 oauthlib==2.0.0
 python-dateutil==2.5.3
 pytz==2016.7
