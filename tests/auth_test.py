@@ -12,6 +12,13 @@ class LoginResourceTestCase(unittest.TestCase):
         self.app = Rinnegan.app.test_client()
         self.mail = Rinnegan.mail
 
+        self.supervisor = Supervisor(
+            email="someone@something.com",
+            password="abcd"
+        )
+
+        self.supervisor.save()
+
     def login(self, email, password):
         posted_dict = {
             'email': email,
@@ -67,74 +74,77 @@ class LoginResourceTestCase(unittest.TestCase):
         return obj
 
     def test_login_logout(self):
-        rv = self.login('arushgyl@gmail.com', 'pepsi')
+        rv = self.login(self.supervisor.email, self.supervisor.password)
         j = self.dejsonify(rv.data)
         self.assertEqual(j['success'], True)
         rv = self.logout()
         j = self.dejsonify(rv.data)
         self.assertEqual(j['success'], True)
-        rv = self.login('arush', 'frfrf')
+        rv = self.login('random', 'random')
         j = self.dejsonify(rv.data)
         self.assertEqual(j['success'], False)
 
     def test_change_password(self):
-        self.login('arushgyl@gmail.com', 'pepsi')
-        rv = self.change_password('pepsi', 'pepsi1')
+        self.login(self.supervisor.email, self.supervisor.password)
+        rv = self.change_password(self.supervisor.password, 'changed_password')
         j = self.dejsonify(rv.data)
         self.assertEqual(j['success'], True)
 
         self.logout()
 
-        rv = self.change_password('pepsi1', 'pepsi')
+        rv = self.change_password('changed_password', self.supervisor.password)
         j = self.dejsonify(rv.data)
         self.assertEqual(j['success'], False)
 
-        rv = self.login('arushgyl@gmail.com', 'pepsi1')
+        rv = self.login(self.supervisor.email, 'changed_password')
         j = self.dejsonify(rv.data)
         self.assertEqual(j['success'], True)
 
-        rv = self.change_password('pep', 'pepsi1')
+        rv = self.change_password('random_string', self.supervisor.password)
         j = self.dejsonify(rv.data)
         self.assertEqual(j['success'], False)
 
-        rv = self.change_password('pepsi1', 'pepsi')
+        rv = self.change_password('changed_password', self.supervisor.password)
 
     def test_forgot_password(self):
 
         with self.mail.record_messages() as outbox:
-            rv = self.forgot_password_p1('arushgl@gmail.com')
+            rv = self.forgot_password_p1('random@random.com')
             j = self.dejsonify(rv.data)
             self.assertEqual(j['success'], False)
 
-            rv = self.forgot_password_p1('arushgyl@gmail.com')
+            rv = self.forgot_password_p1(self.supervisor.email)
             j = self.dejsonify(rv.data)
             self.assertEqual(j['success'], True)
 
-            s = Supervisor.search_supervisor('arushgyl@gmail.com')
+            s = Supervisor.search_supervisor(self.supervisor.email)
             pr = s.get_password_recovery()
             self.assertIsNotNone(pr.token)
 
             self.assertEqual(len(outbox) ,1)
             assert str(pr.token) in outbox[0].body 
 
-        rv = self.forgot_password_p2('someone@gmail.com', pr.token, "pepsi1")
+        rv = self.forgot_password_p2('random@gmail.com', pr.token, "abcd2")
         j = self.dejsonify(rv.data)
         self.assertEqual(j['success'], False)
 
-        rv = self.forgot_password_p2('arushgyl@gmail.com', 122, "pepsi1")
+        rv = self.forgot_password_p2(self.supervisor.email, 122, "abcd2")
         j = self.dejsonify(rv.data)
         self.assertEqual(j['success'], False)
         
-        rv = self.forgot_password_p2('arushgyl@gmail.com', pr.token, "pepsi1")
+        rv = self.forgot_password_p2(self.supervisor.email, pr.token, "abcd2")
         j = self.dejsonify(rv.data)
         self.assertEqual(j['success'], True)
 
-        self.login('arushgyl@gmail.com', 'pepsi1')
+        self.login(self.supervisor.email, 'abcd2')
         j = self.dejsonify(rv.data)
         self.assertEqual(j['success'], True)
 
-        self.change_password('pepsi1', 'pepsi')
+        self.change_password('abcd2', self.supervisor.password)
         self.logout()
+
+    def tearDown(self):
+        self.supervisor.delete()
 
 if __name__ == '__main__':
     unittest.main()
