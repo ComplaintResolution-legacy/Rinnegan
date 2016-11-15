@@ -11,7 +11,7 @@ class ComplaintsResource(Resource):
 
     @login_required
     def get(self, status, skip, limit):
-        if((status != "all" and status != "resolved" and status != "rejected" and status!="waitind")):
+        if((status != "all" and status != "resolved" and status != "rejected" and status!="waiting")):
             return {
                 "success": False,
                 "error": "Invalid input"
