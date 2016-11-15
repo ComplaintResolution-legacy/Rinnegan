@@ -9,11 +9,12 @@ itsdangerous==0.24
 Jinja2==2.8
 MarkupSafe==0.23
 marshmallow==2.10.3
--e git+https://github.com/ComplaintResolution/models#egg=models
+-e git+https://github.com/ComplaintResolution/models@54d9a3a709d8a83760fd05907f55545d904d822b#egg=models
 oauthlib==2.0.0
 python-dateutil==2.5.3
 pytz==2016.7
 requests==2.11.1
 requests-oauthlib==0.7.0
 six==1.10.0
+tweepy==3.5.0
 Werkzeug==0.11.11
